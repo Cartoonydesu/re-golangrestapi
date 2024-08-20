@@ -8,8 +8,8 @@ import (
 )
 
 func (h *Handler) createSkill(c *gin.Context) {
-	var new Skill
-	err := c.BindJSON(&new)
+	var s Skill
+	err := c.BindJSON(&s)
 	if err != nil {
 		response.BadRequest(c, "error", "Can not extract data from JSON")
 	}
@@ -19,9 +19,9 @@ func (h *Handler) createSkill(c *gin.Context) {
 		return
 	}
 	defer stmt.Close()
-	if _, err := stmt.Exec(new.Key, new.Name, new.Description, new.Logo, pq.Array(new.Logo)); err != nil {
+	if _, err := stmt.Exec(s.Key, s.Name, s.Description, s.Logo, pq.Array(s.Tags)); err != nil {
 		response.BadRequest(c, "error", "Skill already exists")
 		return
 	}
-	response.Success(c, "success", new)
+	response.Success(c, "success", s)
 }
