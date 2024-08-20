@@ -10,4 +10,6 @@ func SkillRouter(r *gin.Engine, h *Handler) {
 	r.PATCH("/api/v1/skills/:key/action/name", h.updateSkillName)
 	r.PATCH("/api/v1/skills/:key/action/description", h.updateSkillDescription)
 	r.PATCH("/api/v1/skills/:key/action/logo", h.updateSkillLogo)
+	r.PATCH("/api/v1/skills/:key/action/tags", h.updateSkillTags)
+	r.DELETE("/api/v1/skills/:key", h.deleteSkill)
 }
