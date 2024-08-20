@@ -62,3 +62,32 @@ func (h *Handler) updateSkillDescription(c *gin.Context) {
 	}
 	response.Success(c, "success", s)	
 }
+
+func (h *Handler) updateSkillLogo(c *gin.Context) {
+	p := c.Param("key")
+	type logo struct {
+		Logo string `json:"logo"`
+	}
+	var l logo
+	err := c.BindJSON(&l)
+	if err != nil {
+		response.BadRequest(c, "error", "Can not extract data from json")
+		return
+	}
+	stmt, err := h.Db.Prepare("UPDATE skill SET logo = $1 WHERE key = $2;")
+	if err != nil {
+		response.BadRequest(c, "error", "Statement error")
+		return
+	}
+	defer stmt.Close()
+	if _, err := stmt.Exec(l.Logo, p); err != nil {
+		response.BadRequest(c, "error", "Not be able to update skill logo")
+		return
+	}
+	s, err := h.getSkillByKey(p)
+	if err != nil {
+		response.InternalServerErr(c, "error", "Skill not found")
+		return
+	}
+	response.Success(c, "success", s)
+}

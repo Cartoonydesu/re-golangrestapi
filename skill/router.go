@@ -9,4 +9,5 @@ func SkillRouter(r *gin.Engine, h *Handler) {
 	r.PUT("/api/v1/skills/:key", h.updateSkill)
 	r.PATCH("/api/v1/skills/:key/action/name", h.updateSkillName)
 	r.PATCH("/api/v1/skills/:key/action/description", h.updateSkillDescription)
+	r.PATCH("/api/v1/skills/:key/action/logo", h.updateSkillLogo)
 }
