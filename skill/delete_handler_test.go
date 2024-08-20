@@ -2,7 +2,6 @@ package skill
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"os"
