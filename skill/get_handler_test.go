@@ -18,7 +18,7 @@ func TestGetSkillById(t *testing.T) {
 	h := Handler{Db: db}
 	r := gin.Default()
 	r.GET("/api/v1/skills/:key", h.getSkillById)
-	t.Run("get the skill by key", func(t *testing.T) {
+	t.Run("get skill by key", func(t *testing.T) {
 		s := Skill{
 			Key:         "go",
 			Name:        "Go",
@@ -34,11 +34,26 @@ func TestGetSkillById(t *testing.T) {
 		assert.Contains(t, w.Body.String(), string(jsonValue))
 	})
 
-	t.Run("get the skill with un exist key", func(t *testing.T) {
+	t.Run("get skill with un exist key", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/v1/skills/unexistedidforsure", nil)
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 		assert.Contains(t, w.Body.String(), "error")
+	})
+}
+
+func TestGetAllSkills(t *testing.T) {
+	db, _ := sql.Open("postgres", os.Getenv("POSTGRES_URI"))
+	defer db.Close()
+	h := Handler{Db: db}
+	r := gin.Default()
+	r.GET("/api/v1/skills", h.getAllSkills)
+	t.Run("get all skills", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/v1/skills", nil)
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Contains(t, w.Body.String(), "success")
 	})
 }
