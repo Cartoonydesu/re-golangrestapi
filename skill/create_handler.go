@@ -19,7 +19,7 @@ func (h *Handler) createSkill(c *gin.Context) {
 		return
 	}
 	defer stmt.Close()
-	if _, err := stmt.Exec(new.Key, new.Name, new.Description, new.Logo, pq.Array(new.Tags)); err != nil {
+	if _, err := stmt.Exec(new.Key, new.Name, new.Description, new.Logo, pq.Array(new.Logo)); err != nil {
 		response.BadRequest(c, "error", "Skill already exists")
 		return
 	}
