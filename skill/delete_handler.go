@@ -11,6 +11,7 @@ func (h *Handler) deleteSkill(c *gin.Context) {
 	_, err := h.getSkillByKey(p)
 	if err != nil {
 		response.InternalServerErr(c, "error", "Skill not found")
+		return
 	}
 	stmt, err := h.Db.Prepare("DELETE FROM skill WHERE key = $1;")
 	if err != nil {

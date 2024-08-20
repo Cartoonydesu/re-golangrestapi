@@ -34,7 +34,7 @@ func TestGetSkillById(t *testing.T) {
 		assert.Contains(t, w.Body.String(), string(jsonValue))
 	})
 
-	t.Run("get skill with un exist key", func(t *testing.T) {
+	t.Run("get skill with unexisted key", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/v1/skills/unexistedidforsure", nil)
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
