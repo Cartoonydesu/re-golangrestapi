@@ -7,9 +7,9 @@ type Handler struct {
 }
 
 type Skill struct {
-	Key string `json:"key" binding:"required"`
-	Name string `json:"name"`
-	Description string `json:"description"`
-	Logo string `json:"logo"`
-	Tags []string `json:"tags"`
+	Key         string   `json:"key" binding:"required"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Logo        string   `json:"logo"`
+	Tags        []string `json:"tags"`
 }
