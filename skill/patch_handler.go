@@ -7,10 +7,11 @@ import (
 	"github.com/lib/pq"
 )
 
+type name struct {
+	Name string `json:"name" binding:"required"`
+}
+
 func (h *Handler) updateSkillName(c *gin.Context) {
-	type name struct {
-		Name string `json:"name" binding:"required"`
-	}
 	p := c.Param("key")
 	var n name
 	err := c.BindJSON(&n)
@@ -30,16 +31,17 @@ func (h *Handler) updateSkillName(c *gin.Context) {
 	}
 	s, err := h.getSkillByKey(p)
 	if err != nil {
-		response.BadRequest(c, "error", "Skill not found")
+		response.InternalServerErr(c, "error", "Skill not found")
 		return
 	}
 	response.Success(c, "success", s)
 }
 
+type desc struct {
+	Desc string `json:"description" binding:"required"`
+}
+
 func (h *Handler) updateSkillDescription(c *gin.Context) {
-	type desc struct {
-		Desc string `json:"description" binding:"required"`
-	}
 	p := c.Param("key")
 	var d desc
 	if err := c.BindJSON(&d); err != nil {
@@ -64,11 +66,12 @@ func (h *Handler) updateSkillDescription(c *gin.Context) {
 	response.Success(c, "success", s)
 }
 
+type logo struct {
+	Logo string `json:"logo" binding:"required"`
+}
+
 func (h *Handler) updateSkillLogo(c *gin.Context) {
 	p := c.Param("key")
-	type logo struct {
-		Logo string `json:"logo" binding:"required"`
-	}
 	var l logo
 	err := c.BindJSON(&l)
 	if err != nil {
@@ -93,11 +96,12 @@ func (h *Handler) updateSkillLogo(c *gin.Context) {
 	response.Success(c, "success", s)
 }
 
+type tags struct {
+	Tags []string `json:"tags" binding:"required"`
+}
+
 func (h *Handler) updateSkillTags(c *gin.Context) {
 	p := c.Param("key")
-	type tags struct {
-		Tags []string `json:"tags" binding:"required"`
-	}
 	var t tags
 	err := c.BindJSON(&t)
 	if err != nil {
