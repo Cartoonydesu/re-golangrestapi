@@ -34,4 +34,19 @@ func TestCreateSkill(t *testing.T) {
 		r.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
+
+	t.Run("create skill failed reading json", func(t *testing.T) {
+		new := Skill{
+			Key:         "testCreate",
+			Name:        "", //Missing skill's name
+			Description: "test",
+			Logo:        "test",
+			Tags:        []string{"test"},
+		}
+		jsonValue, _ := json.Marshal(new)
+		req, _ := http.NewRequest("POST", "/api/v1/skills", bytes.NewBuffer(jsonValue))
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
 }

@@ -44,7 +44,7 @@ func ResetDB() {
 			'Node.js',
 			'Node.js is an open-source, cross-platform, JavaScript runtime environment that executes JavaScript code outside of a browser.',
 			'https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg',
-			'{runtime, javascript}')
+			'{runtime, javascript}');
 			`)
 	if err != nil {
 		log.Panic(err)
