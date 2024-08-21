@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -47,29 +48,29 @@ func TestUpdateSkill(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	// t.Run("update skill failed reading json", func(t *testing.T) {
-	// 	new := Skill{
-	// 		Key:         "testUpdateFailedJson",
-	// 		Name:        "Test",
-	// 		Description: "test",
-	// 		Logo:        "test",
-	// 		Tags:        []string{"test"},
-	// 	}
-	// 	jsonValue, _ := json.Marshal(new)
-	// 	req, _ := http.NewRequest("POST", "/api/v1/skills", bytes.NewBuffer(jsonValue))
-	// 	w := httptest.NewRecorder()
-	// 	r.ServeHTTP(w, req)
-	// 	assert.Equal(t, http.StatusOK, w.Code)
-	// 	updateS := UpdateSkill{
-	// 		//Name field missing
-	// 		Description: "testEdit",
-	// 		Logo:        "testEdit",
-	// 		Tags:        []string{"testEdit", "somethingNew"},
-	// 	}
-	// 	jsonValue, _ = json.Marshal(updateS)
-	// 	req = httptest.NewRequest("PUT", fmt.Sprintf("/api/v1/skills/%v", new.Key), bytes.NewBuffer(jsonValue))
-	// 	w = httptest.NewRecorder()
-	// 	r.ServeHTTP(w, req)
-	// 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	// })
+	t.Run("update skill failed reading json", func(t *testing.T) {
+		new := Skill{
+			Key:         "testUpdateFailedJson",
+			Name:        "Test",
+			Description: "test",
+			Logo:        "test",
+			Tags:        []string{"test"},
+		}
+		jsonValue, _ := json.Marshal(new)
+		req, _ := http.NewRequest("POST", "/api/v1/skills", bytes.NewBuffer(jsonValue))
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusOK, w.Code)
+		updateS := UpdateSkill{
+			Name:        "", //Skill's name missing
+			Description: "testEdit",
+			Logo:        "testEdit",
+			Tags:        []string{"testEdit", "somethingNew"},
+		}
+		jsonValue, _ = json.Marshal(updateS)
+		req = httptest.NewRequest("PUT", fmt.Sprintf("/api/v1/skills/%v", new.Key), bytes.NewBuffer(jsonValue))
+		w = httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
 }

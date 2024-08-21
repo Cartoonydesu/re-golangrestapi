@@ -1,5 +1,11 @@
 package skill
 
+import "cartoonydesu/database"
+
+func init() {
+	database.ResetDB()
+}
+
 // func resetDB() {
 // 	db, _ := sql.Open("postgres", os.Getenv("POSTGRES_URI"))
 // 	defer db.Close()

@@ -8,10 +8,10 @@ import (
 )
 
 type UpdateSkill struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Logo        string   `json:"logo"`
-	Tags        []string `json:"tags"`
+	Name        string   `json:"name" binding:"required"`
+	Description string   `json:"description" binding:"required"`
+	Logo        string   `json:"logo" binding:"required"`
+	Tags        []string `json:"tags" binding:"required"`
 }
 
 func (h *Handler) updateSkill(c *gin.Context) {
