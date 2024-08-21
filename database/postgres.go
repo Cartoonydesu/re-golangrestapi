@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"log"
 	"os"
+
+	_ "github.com/lib/pq"
 )
 
 func NewPostgres() *sql.DB {
@@ -15,7 +17,7 @@ func NewPostgres() *sql.DB {
 }
 
 func ResetDB() {
-	db, _ := sql.Open("postgres", os.Getenv("POSTGRES_URI"))
+	db := NewPostgres()
 	defer db.Close()
 	_, err := db.Exec("DROP TABLE if exists skill CASCADE;")
 	if err != nil {

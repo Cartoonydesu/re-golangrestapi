@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	_ "github.com/lib/pq"
 )
 
 func TestCreateSkill(t *testing.T) {
