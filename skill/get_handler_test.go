@@ -1,11 +1,10 @@
 package skill
 
 import (
-	"database/sql"
+	"cartoonydesu/database"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +12,7 @@ import (
 )
 
 func TestGetSkillById(t *testing.T) {
-	db, _ := sql.Open("postgres", os.Getenv("POSTGRES_URI"))
+	db := database.NewPostgres()
 	defer db.Close()
 	h := Handler{Db: db}
 	r := gin.Default()
@@ -44,7 +43,7 @@ func TestGetSkillById(t *testing.T) {
 }
 
 func TestGetAllSkills(t *testing.T) {
-	db, _ := sql.Open("postgres", os.Getenv("POSTGRES_URI"))
+	db := database.NewPostgres()
 	defer db.Close()
 	h := Handler{Db: db}
 	r := gin.Default()

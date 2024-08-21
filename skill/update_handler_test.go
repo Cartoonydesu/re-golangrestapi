@@ -2,12 +2,11 @@ package skill
 
 import (
 	"bytes"
-	"database/sql"
+	"cartoonydesu/database"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +14,7 @@ import (
 )
 
 func TestUpdateSkill(t *testing.T) {
-	db, _ := sql.Open("postgres", os.Getenv("POSTGRES_URI"))
+	db := database.NewPostgres()
 	defer db.Close()
 	h := Handler{Db: db}
 	r := gin.Default()
@@ -88,10 +87,10 @@ func TestUpdateSkill(t *testing.T) {
 		r.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusOK, w.Code)
 		type wrongUpdateType struct {
-			Name int
+			Name        int
 			Description string
-			Logo string
-			Tags []string
+			Logo        string
+			Tags        []string
 		}
 		updateS := wrongUpdateType{
 			Name:        123, //Skill's name int instead of string

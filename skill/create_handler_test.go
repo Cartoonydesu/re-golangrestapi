@@ -2,20 +2,19 @@ package skill
 
 import (
 	"bytes"
-	"database/sql"
+	"cartoonydesu/database"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
 	_ "github.com/lib/pq"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateSkill(t *testing.T) {
-	db, _ := sql.Open("postgres", os.Getenv("POSTGRES_URI"))
+	db := database.NewPostgres()
 	defer db.Close()
 	h := Handler{Db: db}
 	r := gin.Default()
