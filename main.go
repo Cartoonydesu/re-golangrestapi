@@ -1,11 +1,10 @@
 package main
 
 import (
+	"cartoonydesu/database"
 	"cartoonydesu/skill"
 	"context"
-	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -19,16 +18,11 @@ import (
 )
 
 func main() {
-	fmt.Print(os.Getenv("POSTGRES_URI"))
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
-	connStr := os.Getenv("POSTGRES_URI")
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		log.Panic(err)
-	}
+	db := database.NewPostgres()
 	defer db.Close()
-	if err = db.Ping(); err != nil {
+	if err := db.Ping(); err != nil {
 		log.Panic(err)
 	}
 	r := gin.Default()
@@ -52,6 +46,10 @@ func main() {
 		}
 	}
 	slog.Info("Server Shuting down...")
+}
+
+func init() {
+	// database.ResetDB()
 }
 
 // func SetRouter(r *gin.Engine, sh *skill.Handler) {
