@@ -1,6 +1,7 @@
 package skill
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -34,6 +35,32 @@ func TestGetAllSkills(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 	expectedBody := `{"status":"success","data":[{"key":"skill1","name":"Skill One","description":"Description for skill one","logo":"logo1.png","tags":["tag1","tag2"]},{"key":"skill2","name":"Skill Two","description":"Description for skill two","logo":"logo2.png","tags":["tag3","tag4"]}]}`
 	assert.JSONEq(t, expectedBody, w.Body.String())
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestGetAllSkillsQueryError(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.Default()
+	w := httptest.NewRecorder()
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		log.Panic(err)
+	}
+	defer db.Close()
+	mock.ExpectQuery("SELECT key, name, description, logo, tags FROM skill;").
+		WillReturnError(fmt.Errorf("query failed"))
+	h := &Handler{Db: db}
+	path := "/api/v1/skills"
+	router.GET(path, h.getAllSkills)
+	req, _ := http.NewRequest("GET", path, nil)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	expectedBody := `{"status":"error","message":"Can not get all skills"}`
+	assert.JSONEq(t, expectedBody, w.Body.String())
+
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Error(err)
 	}
