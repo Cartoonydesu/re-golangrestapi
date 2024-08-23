@@ -1,58 +1,67 @@
 package skill
 
 import (
-	"cartoonydesu/database"
-	"encoding/json"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gin-gonic/gin"
+	"github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetSkillById(t *testing.T) {
-	db := database.NewPostgres()
+func TestGetAllSkills(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.Default()
+	w := httptest.NewRecorder()
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		log.Panic(err)
+	}
 	defer db.Close()
-	h := Handler{Db: db}
-	r := gin.Default()
-	r.GET("/api/v1/skills/:key", h.getSkillById)
-	t.Run("get skill by key", func(t *testing.T) {
-		s := Skill{
-			Key:         "go",
-			Name:        "Go",
-			Description: "Go is an open source programming language that makes it easy to build simple, reliable, and efficient software.",
-			Logo:        "https://upload.wikimedia.org/wikipedia/commons/0/05/Go_Logo_Blue.svg",
-			Tags:        []string{"go", "golang"},
-		}
-		jsonValue, _ := json.Marshal(s)
-		req, _ := http.NewRequest("GET", "/api/v1/skills/go", nil)
-		w := httptest.NewRecorder()
-		r.ServeHTTP(w, req)
-		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Contains(t, w.Body.String(), string(jsonValue))
-	})
+	rows := sqlmock.NewRows([]string{"key", "name", "description", "logo", "tags"}).
+		AddRow("skill1", "Skill One", "Description for skill one", "logo1.png", pq.Array([]string{"tag1", "tag2"})).
+		AddRow("skill2", "Skill Two", "Description for skill two", "logo2.png", pq.Array([]string{"tag3", "tag4"}))
+	mock.ExpectQuery("SELECT key, name, description, logo, tags FROM skill;").WillReturnRows(rows)
+	h := &Handler{Db: db}
+	path := "/api/v1/skills"
+	router.GET(path, h.getAllSkills)
+	req, _ := http.NewRequest("GET", path, nil)
+	router.ServeHTTP(w, req)
 
-	t.Run("get skill with unexisted key", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "/api/v1/skills/unexistedidforsure", nil)
-		w := httptest.NewRecorder()
-		r.ServeHTTP(w, req)
-		assert.Equal(t, http.StatusInternalServerError, w.Code)
-		assert.Contains(t, w.Body.String(), "error")
-	})
+	assert.Equal(t, http.StatusOK, w.Code)
+	expectedBody := `{"status":"success","data":[{"key":"skill1","name":"Skill One","description":"Description for skill one","logo":"logo1.png","tags":["tag1","tag2"]},{"key":"skill2","name":"Skill Two","description":"Description for skill two","logo":"logo2.png","tags":["tag3","tag4"]}]}`
+	assert.JSONEq(t, expectedBody, w.Body.String())
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Error(err)
+	}
 }
 
-func TestGetAllSkills(t *testing.T) {
-	db := database.NewPostgres()
+func TestGetAllSkillsFailed(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.Default()
+	w := httptest.NewRecorder()
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		log.Panic(err)
+	}
 	defer db.Close()
-	h := Handler{Db: db}
-	r := gin.Default()
-	r.GET("/api/v1/skills", h.getAllSkills)
-	t.Run("get all skills", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "/api/v1/skills", nil)
-		w := httptest.NewRecorder()
-		r.ServeHTTP(w, req)
-		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Contains(t, w.Body.String(), "success")
-	})
+	rows := sqlmock.NewRows([]string{"name", "description", "logo", "tags"}).
+		AddRow("Skill One", "Description for skill one", "logo1.png", pq.Array([]string{"tag1", "tag2"})).
+		AddRow("Skill Two", "Description for skill two", "logo2.png", pq.Array([]string{"tag3", "tag4"}))
+	mock.ExpectQuery("SELECT key, name, description, logo, tags FROM skill;").WillReturnRows(rows)
+	h := &Handler{Db: db}
+	path := "/api/v1/skills"
+	router.GET(path, h.getAllSkills)
+	req, _ := http.NewRequest("GET", path, nil)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	expectedBody := `{"status":"error", "message": "Can not get all skills"}`
+	assert.JSONEq(t, expectedBody, w.Body.String())
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Error(err)
+	}
 }
