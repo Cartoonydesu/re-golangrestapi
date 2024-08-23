@@ -12,6 +12,7 @@ func (h *Handler) createSkill(c *gin.Context) {
 	err := c.BindJSON(&s)
 	if err != nil {
 		response.BadRequest(c, "error", "Can not extract data from JSON")
+		return
 	}
 	stmt, err := h.Db.Prepare("INSERT INTO skill (key, name, description, logo, tags) VALUES($1, $2, $3, $4, $5) returning key;")
 	if err != nil {
