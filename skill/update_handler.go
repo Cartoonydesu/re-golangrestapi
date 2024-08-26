@@ -22,7 +22,7 @@ func (h *Handler) updateSkill(c *gin.Context) {
 		response.BadRequest(c, "error", "Can not extract data from JSON")
 		return
 	}
-	stmt, err := h.Db.Prepare("UPDATE skill SET name = $1, description = $2, logo = $3, tags = $4 where key = $5;")
+	stmt, err := h.Db.Prepare("UPDATE skill SET name = $1, description = $2, logo = $3, tags = $4 where key = $5")
 	if err != nil {
 		response.BadRequest(c, "error", "Statement error")
 		return

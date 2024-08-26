@@ -19,7 +19,7 @@ func (h *Handler) updateSkillName(c *gin.Context) {
 		response.BadRequest(c, "error", "Can not extract data from json")
 		return
 	}
-	stmt, err := h.Db.Prepare("UPDATE skill SET name = $1 where key = $2;")
+	stmt, err := h.Db.Prepare("UPDATE skill SET name = $1 where key = $2")
 	if err != nil {
 		response.BadRequest(c, "error", "Statement error")
 		return
@@ -48,7 +48,7 @@ func (h *Handler) updateSkillDescription(c *gin.Context) {
 		response.BadRequest(c, "error", "Can not extract data from json")
 		return
 	}
-	stmt, err := h.Db.Prepare("UPDATE skill SET description = $1 WHERE key = $2;")
+	stmt, err := h.Db.Prepare("UPDATE skill SET description = $1 WHERE key = $2")
 	if err != nil {
 		response.BadRequest(c, "error", "Statement error")
 		return
@@ -78,7 +78,7 @@ func (h *Handler) updateSkillLogo(c *gin.Context) {
 		response.BadRequest(c, "error", "Can not extract data from json")
 		return
 	}
-	stmt, err := h.Db.Prepare("UPDATE skill SET logo = $1 WHERE key = $2;")
+	stmt, err := h.Db.Prepare("UPDATE skill SET logo = $1 WHERE key = $2")
 	if err != nil {
 		response.BadRequest(c, "error", "Statement error")
 		return
@@ -108,7 +108,7 @@ func (h *Handler) updateSkillTags(c *gin.Context) {
 		response.BadRequest(c, "error", "Can not extract data from json")
 		return
 	}
-	stmt, err := h.Db.Prepare("UPDATE skill SET tags = $1 WHERE key = $2;")
+	stmt, err := h.Db.Prepare("UPDATE skill SET tags = $1 WHERE key = $2")
 	if err != nil {
 		response.BadRequest(c, "error", "Statement error")
 		return

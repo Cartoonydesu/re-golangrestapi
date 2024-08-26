@@ -2,14 +2,13 @@ package skill
 
 import (
 	"cartoonydesu/response"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 )
 
 func (h *Handler) getAllSkills(c *gin.Context) {
-	rows, err := h.Db.Query("SELECT key, name, description, logo, tags FROM skill;")
+	rows, err := h.Db.Query("SELECT key, name, description, logo, tags FROM skill")
 	if err != nil || rows.Err() != nil {
 		response.BadRequest(c, "error", "Can not get all skills")
 		return
@@ -39,7 +38,7 @@ func (h *Handler) getSkillById(c *gin.Context) {
 }
 
 func (h *Handler) getSkillByKey(key string) (Skill, error) {
-	skill := h.Db.QueryRow(fmt.Sprintf("SELECT key, name, description, logo, tags FROM skill WHERE key = '%v';", key))
+	skill := h.Db.QueryRow("SELECT key, name, description, logo, tags FROM skill WHERE key = $1", key)
 	var s Skill
 	err := skill.Scan(&s.Key, &s.Name, &s.Description, &s.Logo, pq.Array(&s.Tags))
 	if err != nil {
